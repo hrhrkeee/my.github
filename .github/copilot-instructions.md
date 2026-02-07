@@ -59,11 +59,11 @@ Pythonを使った機械学習のための新モデルの開発・構築・デ�
 ## ディレクトリ構成
 
 ```
-main.py               # エントリーポイント（ルートの唯一のPythonスクリプト）
+main.py                # エントリーポイント（ルートの唯一のPythonスクリプト）
 pyproject.toml         # プロジェクト設定・依存関係（uv管理）
 .env                   # 環境変数（APIキー等）
 src/                   # モデル定義・学習ロジック・推論パイプライン等のソースコード
-data/                  # データセット（raw, processed, splitなどサブフォルダで管理）
+data/                  # データセット（coco_2017やcustom_dataset_v2026.1.1などサブフォルダで管理）
 notebooks/             # 各種機能を試すためのJupyter Notebook（日本語ファイル名・番号付き）
 util/                  # 汎用ユーティリティ関数（ロギング、可視化、評価指標など）
 model_weights/         # 学習済みモデルの重みファイル（.gitignore対象）

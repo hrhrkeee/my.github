@@ -1,0 +1,61 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+
+# 仮想環境
+.venv/
+venv/
+env/
+ENV/
+
+# モデル重みファイル
+model_weights/
+*.pt
+*.pth
+*.bin
+
+# 出力ファイル（フォルダ構造は保つ）
+output/
+!output/.gitkeep
+
+# 環境変数
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# ログ
+*.log
+logs/
+
+# テンポラリ
+temp/
+tmp/
+*.tmp
+
+# キャッシュ
+.cache/
+*.cache
+
+# Jupyter
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/
+
+# データキャッシュ
+data/.cache/
