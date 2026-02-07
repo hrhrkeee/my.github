@@ -1,0 +1,10 @@
+[project]
+name = "ml-project"
+version = "0.1.0"
+description = "機械学習のための新モデルの開発・構築・デプロイ"
+requires-python = ">=3.11"
+dependencies = [
+    "torch",
+    "numpy",
+    "matplotlib",
+]
