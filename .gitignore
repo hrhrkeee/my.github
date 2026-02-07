@@ -23,6 +23,8 @@ model_weights/
 # 出力ファイル（フォルダ構造は保つ）
 output/
 !output/.gitkeep
+data/
+!data/.gitkeep
 
 # 環境変数
 .env
