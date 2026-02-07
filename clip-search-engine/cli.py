@@ -72,7 +72,9 @@ def print_results(results: list[dict], query_desc: str) -> None:
 
 def cmd_register(args: argparse.Namespace) -> None:
     """登録コマンドを実行する。"""
-    engine = SearchEngine(db_dir=args.db_dir, device=args.device)
+    engine = SearchEngine(
+        db_dir=args.db_dir, device=args.device, cache_dir=args.cache_dir
+    )
 
     if args.image:
         for img_path in args.image:
@@ -107,7 +109,9 @@ def cmd_register(args: argparse.Namespace) -> None:
 
 def cmd_search(args: argparse.Namespace) -> None:
     """検索コマンドを実行する。"""
-    engine = SearchEngine(db_dir=args.db_dir, device=args.device)
+    engine = SearchEngine(
+        db_dir=args.db_dir, device=args.device, cache_dir=args.cache_dir
+    )
 
     if args.text:
         results = engine.search_by_text(args.text, top_k=args.top_k)
@@ -132,7 +136,9 @@ def cmd_search(args: argparse.Namespace) -> None:
 
 def cmd_info(args: argparse.Namespace) -> None:
     """DB情報を表示する。"""
-    engine = SearchEngine(db_dir=args.db_dir, device=args.device)
+    engine = SearchEngine(
+        db_dir=args.db_dir, device=args.device, cache_dir=args.cache_dir
+    )
     stats = engine.get_stats()
 
     print("\n📊 ベクトルDB情報")
@@ -152,7 +158,9 @@ def cmd_info(args: argparse.Namespace) -> None:
 
 def cmd_clear(args: argparse.Namespace) -> None:
     """DBをクリアする。"""
-    engine = SearchEngine(db_dir=args.db_dir, device=args.device)
+    engine = SearchEngine(
+        db_dir=args.db_dir, device=args.device, cache_dir=args.cache_dir
+    )
     count = engine.db.count()
 
     if not args.yes:
@@ -176,6 +184,12 @@ def main() -> None:
         type=str,
         default=None,
         help="ベクトルDBの保存先ディレクトリ（デフォルト: clip-search-engine/db/）",
+    )
+    parser.add_argument(
+        "--cache-dir",
+        type=str,
+        default=None,
+        help="CLIPモデルキャッシュの保存先ディレクトリ（デフォルト: clip-search-engine/model/）",
     )
     parser.add_argument(
         "--device",

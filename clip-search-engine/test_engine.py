@@ -21,6 +21,7 @@ def test_video_processor() -> None:
 
     # インポートできることを確認（関数の存在チェック）
     assert hasattr(video_processor, "extract_frames")
+    assert hasattr(video_processor, "extract_frames_by_count")
     assert hasattr(video_processor, "get_video_info")
 
     print("✅ video_processor: インポート成功")
@@ -67,24 +68,26 @@ def test_clip_model() -> None:
     from clip_model import CLIPJapaneseModel
 
     model = CLIPJapaneseModel()
+    dim = model.embedding_dim
+    print(f"  embedding_dim={dim}, device={model.device}")
 
     # 擬似画像を生成してエンコード
     dummy_image = Image.fromarray(
         np.random.randint(0, 255, (224, 224, 3), dtype=np.uint8)
     )
     image_vec = model.encode_image(dummy_image)
-    assert image_vec.shape == (1, 768), f"画像ベクトルの形状が正しいこと: {image_vec.shape}"
+    assert image_vec.shape == (1, dim), f"画像ベクトルの形状が正しいこと: {image_vec.shape}"
     assert np.allclose(np.linalg.norm(image_vec), 1.0, atol=1e-5), "L2正規化済みであること"
 
     # テキストをエンコード
     text_vec = model.encode_text("これはテストです")
-    assert text_vec.shape == (1, 768), f"テキストベクトルの形状が正しいこと: {text_vec.shape}"
+    assert text_vec.shape == (1, dim), f"テキストベクトルの形状が正しいこと: {text_vec.shape}"
     assert np.allclose(np.linalg.norm(text_vec), 1.0, atol=1e-5), "L2正規化済みであること"
 
     # 複数画像のバッチエンコード
     images = [dummy_image, dummy_image]
     batch_vec = model.encode_images(images)
-    assert batch_vec.shape == (2, 768), f"バッチベクトルの形状が正しいこと: {batch_vec.shape}"
+    assert batch_vec.shape == (2, dim), f"バッチベクトルの形状が正しいこと: {batch_vec.shape}"
 
     print("✅ clip_model: 全テスト通過")
 

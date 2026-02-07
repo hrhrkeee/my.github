@@ -10,6 +10,7 @@ from typing import Any
 
 import numpy as np
 from PIL import Image
+from tqdm import tqdm
 
 from clip_model import CLIPJapaneseModel
 from vector_db import VectorDB
@@ -37,14 +38,16 @@ class SearchEngine:
         self,
         db_dir: str | Path | None = None,
         device: str | None = None,
+        cache_dir: str | Path | None = None,
     ) -> None:
         """検索エンジンを初期化する。
 
         Args:
             db_dir: ベクトルDBの保存先。Noneの場合はデフォルトパス。
             device: CLIP推論に使用するデバイス。
+            cache_dir: CLIPモデルキャッシュの保存先。Noneの場合はデフォルトパス。
         """
-        self.model = CLIPJapaneseModel(device=device)
+        self.model = CLIPJapaneseModel(device=device, cache_dir=cache_dir)
         self.db = VectorDB(db_dir=db_dir, dim=self.model.embedding_dim)
 
     def register_image(self, image_path: str | Path) -> int:
@@ -184,7 +187,7 @@ class SearchEngine:
         indices: list[int] = []
 
         # 画像を登録
-        for img_path in image_files:
+        for img_path in tqdm(image_files, desc="画像を登録中", disable=not image_files):
             try:
                 idx = self.register_image(img_path)
                 indices.append(idx)
@@ -192,7 +195,7 @@ class SearchEngine:
                 logger.error("画像登録失敗: %s - %s", img_path, e)
 
         # 動画を登録
-        for vid_path in video_files:
+        for vid_path in tqdm(video_files, desc="動画を登録中", disable=not video_files):
             try:
                 idx = self.register_video(vid_path, frame_interval=frame_interval)
                 indices.append(idx)

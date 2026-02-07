@@ -5,6 +5,7 @@ line-corporation/clip-japanese-base-v2 を使用して、
 """
 
 import logging
+from pathlib import Path
 
 import numpy as np
 import torch
@@ -15,6 +16,9 @@ logger = logging.getLogger(__name__)
 
 # モデルのHugging Faceパス
 HF_MODEL_PATH = "line-corporation/clip-japanese-base-v2"
+
+# デフォルトのモデルキャッシュディレクトリ
+DEFAULT_CACHE_DIR = Path(__file__).parent / "model"
 
 
 class CLIPJapaneseModel:
@@ -27,29 +31,42 @@ class CLIPJapaneseModel:
         model: CLIPモデル本体
         tokenizer: テキストトークナイザー
         processor: 画像プロセッサー
+        cache_dir: モデルファイルのキャッシュディレクトリ
     """
 
-    def __init__(self, device: str | None = None) -> None:
+    def __init__(
+        self,
+        device: str | None = None,
+        cache_dir: str | Path | None = None,
+    ) -> None:
         """モデルを初期化する。
 
         Args:
             device: 使用するデバイス。Noneの場合は自動検出する。
+            cache_dir: モデルキャッシュの保存先。Noneの場合はデフォルトパス。
         """
         if device is None:
             self.device = "cuda" if torch.cuda.is_available() else "cpu"
         else:
             self.device = device
 
-        logger.info("CLIPモデルをロード中: %s (device=%s)", HF_MODEL_PATH, self.device)
+        self.cache_dir = Path(cache_dir) if cache_dir else DEFAULT_CACHE_DIR
+
+        logger.info(
+            "CLIPモデルをロード中: %s (device=%s, cache=%s)",
+            HF_MODEL_PATH,
+            self.device,
+            self.cache_dir,
+        )
 
         self.tokenizer = AutoTokenizer.from_pretrained(
-            HF_MODEL_PATH, trust_remote_code=True
+            HF_MODEL_PATH, trust_remote_code=True, cache_dir=self.cache_dir
         )
         self.processor = AutoImageProcessor.from_pretrained(
-            HF_MODEL_PATH, trust_remote_code=True
+            HF_MODEL_PATH, trust_remote_code=True, cache_dir=self.cache_dir
         )
         self.model = AutoModel.from_pretrained(
-            HF_MODEL_PATH, trust_remote_code=True
+            HF_MODEL_PATH, trust_remote_code=True, cache_dir=self.cache_dir
         ).to(self.device)
         self.model.eval()
 

@@ -30,7 +30,7 @@ class VectorDB:
         dim: ベクトルの次元数。
     """
 
-    def __init__(self, db_dir: str | Path | None = None, dim: int = 768) -> None:
+    def __init__(self, db_dir: str | Path | None = None, dim: int = 256) -> None:
         """ベクトルDBを初期化する。
 
         Args:
