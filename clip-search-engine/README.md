@@ -99,6 +99,33 @@ clip-search-engine/
 └── model/               # モデルキャッシュ（自動生成）
 ```
 
+## Webアプリ
+
+ブラウザベースのGUIでも利用できます。
+
+### 起動方法
+
+```bash
+# 基本起動（http://127.0.0.1:7860）
+uv run python clip-search-engine/web_app.py
+
+# 起動時に自動初期化
+uv run python clip-search-engine/web_app.py --auto-init
+
+# ホスト・ポート指定
+uv run python clip-search-engine/web_app.py --host 0.0.0.0 --port 8080
+
+# 公開URLを生成（Gradio Share機能）
+uv run python clip-search-engine/web_app.py --share
+```
+
+### Webアプリの機能
+
+- **初期化タブ**: エンジンの初期化（DB・モデルキャッシュパスの設定）
+- **登録タブ**: ディレクトリ内の画像・動画を一括登録
+- **検索タブ**: テキストまたは画像で類似メディアを検索（結果はギャラリー表示）
+- **管理タブ**: DB統計表示・DBクリア
+
 ## 動画のベクトル化方法
 
 1. PyAV (av) で動画を開き、シークベースで高速フレーム抽出

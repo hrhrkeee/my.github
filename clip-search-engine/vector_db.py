@@ -6,6 +6,8 @@ FAISS IndexFlatIPを使用して、コサイン類似度ベースの近傍検索
 
 import json
 import logging
+import shutil
+import tempfile
 from pathlib import Path
 from typing import Any
 
@@ -139,8 +141,19 @@ class VectorDB:
         return results
 
     def save(self) -> None:
-        """データベースをディスクに保存する。"""
-        faiss.write_index(self.index, str(self._index_path))
+        """データベースをディスクに保存する。
+
+        FAISSはUnicodeパス（日本語等）でファイルI/Oに失敗することがあるため、
+        一時ディレクトリを介して保存する。
+        """
+        # 一時ディレクトリでFAISSファイルを作成し、後で移動する
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            tmp_index_path = Path(tmp_dir) / "faiss.index"
+            faiss.write_index(self.index, str(tmp_index_path))
+            # 一時ファイルを目的のパスにコピー
+            shutil.copy2(tmp_index_path, self._index_path)
+
+        # メタデータはJSON（Python標準ライブラリ）なのでUnicodeパスでも問題なし
         with open(self._metadata_path, "w", encoding="utf-8") as f:
             json.dump(self.metadata, f, ensure_ascii=False, indent=2)
 
@@ -149,8 +162,17 @@ class VectorDB:
         )
 
     def _load(self) -> None:
-        """ディスクからデータベースをロードする。"""
-        self.index = faiss.read_index(str(self._index_path))
+        """ディスクからデータベースをロードする。
+
+        FAISSはUnicodeパス（日本語等）でファイルI/Oに失敗することがあるため、
+        一時ディレクトリを介して読み込む。
+        """
+        # 一時ディレクトリにコピーしてFAISSで読み込む
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            tmp_index_path = Path(tmp_dir) / "faiss.index"
+            shutil.copy2(self._index_path, tmp_index_path)
+            self.index = faiss.read_index(str(tmp_index_path))
+
         with open(self._metadata_path, "r", encoding="utf-8") as f:
             self.metadata = json.load(f)
 

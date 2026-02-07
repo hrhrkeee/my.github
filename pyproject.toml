@@ -20,6 +20,7 @@ dependencies = [
     "av>=16.1.0",
     "tqdm>=4.67.3",
     "protobuf>=6.33.5",
+    "gradio>=6.5.1",
 ]
 
 
