@@ -8,4 +8,10 @@ dependencies = [
     "numpy",
     "matplotlib",
     "ultralytics>=8.4.12",
+    "transformers>=5.1.0",
+    "sentencepiece>=0.2.1",
+    "pillow>=12.1.0",
+    "faiss-cpu>=1.13.2",
+    "opencv-python>=4.13.0.92",
+    "timm>=1.0.24",
 ]

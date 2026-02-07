@@ -1,0 +1,14 @@
+"""CLIエントリーポイント。
+
+python -m clip_search_engine で実行できるようにする。
+"""
+
+import os
+import sys
+
+# パッケージディレクトリをパスに追加してインポートできるようにする
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+from cli import main
+
+main()
