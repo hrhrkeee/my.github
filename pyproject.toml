@@ -7,4 +7,5 @@ dependencies = [
     "torch",
     "numpy",
     "matplotlib",
+    "ultralytics>=8.4.12",
 ]
