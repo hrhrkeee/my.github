@@ -1,0 +1,62 @@
+project_name: "<replace-with-project-name>"
+default_branch: "main"
+
+runtime:
+  languages: []
+  versions: []
+
+package_managers: []
+
+build:
+  commands: []
+  artifacts: []
+
+test:
+  commands: []
+  reports: []
+
+lint:
+  commands: []
+
+format:
+  commands: []
+
+coverage:
+  commands: []
+  thresholds: {}
+
+services: []
+containers: []
+
+entrypoints:
+  app: []
+  worker: []
+  cli: []
+
+required_env_files: []
+ci_locations:
+  - ".github/workflows"
+
+doc_locations:
+  - "docs/specs"
+  - "docs/adr"
+  - "docs/architecture"
+  - "docs/runbooks"
+  - "docs/regressions"
+  - "docs/glossary"
+
+test_locations:
+  - "tests/unit"
+  - "tests/integration"
+  - "tests/e2e"
+  - "tests/contract"
+  - "tests/regression"
+
+diagram_locations:
+  source: "docs/architecture/diagrams/source"
+  export: "docs/architecture/diagrams/export"
+
+git_conventions:
+  branch_pattern: "copilot/<type>/<scope>-<slug>"
+  commit_style: "conventional"
+  push_default: "forbidden-unless-explicit"

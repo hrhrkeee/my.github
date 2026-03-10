@@ -1,135 +1,47 @@
-<!-- ============================================================
-  .github/copilot-instructions.md
-  ============================================================
-  【このファイルの役割】
-  リポジトリ全体に適用される「常時有効なカスタムインストラクション」です。
-  ワークスペース内のすべてのCopilot Chatリクエストに自動的に付加されます。
+# Repository-wide Copilot rules
 
-  【何を記載するか】
-  - プロジェクトの概要・目的
-  - 使用言語・フレームワーク・ランタイムのバージョン
-  - コーディング規約（命名規則、インデント、コメントスタイルなど）
-  - プロジェクトのディレクトリ構成と各フォルダの役割
-  - ビルド・テスト・リントの実行方法
-  - 依存関係やCI/CDパイプラインの概要
+## Mission
+- Solve only the requested scope.
+- Prefer repository context over repeating the user's prompt.
+- Read relevant code, specs, ADRs, diagrams, tests, and Git history before changing files.
 
-  【AIへの影響】
-  - Copilot Chatがコードを生成・提案する際に、ここに書かれたルールやコンテキストが
-    自動的にプロンプトに含まれます。
-  - プロジェクトの慣習に沿った一貫性のあるコード生成が期待できます。
-  - コードレビュー時にもこの指示が参照されます。
+## Requirement handling
+- If any requirement is ambiguous, ask targeted questions before implementation.
+- State assumptions explicitly when proceeding with incomplete information.
+- Do not invent hidden requirements or policy exceptions.
 
-  【注意事項】
-  - VS Code の設定 `github.copilot.chat.codeGeneration.useInstructionFiles` が
-    有効になっている必要があります（デフォルトで有効）。
-  - このファイルは Visual Studio、GitHub.com(Copilot coding agent) でも検出されます。
-  - 長さは2ページ程度に収めることが推奨されています。
-  - タスク固有の指示は書かず、プロジェクト全体に共通する内容のみ記載してください。
-  ============================================================ -->
+## Design
+- Propose an appropriate design pattern when behavior or structure changes.
+- Keep the design simple, but not at the expense of extensibility or testability.
+- Record non-trivial design decisions in docs or ADRs.
 
-# プロジェクト概要
+## Documentation
+- If behavior, API, schema, workflow, or architecture changes, update the nearest spec.
+- If the design decision is non-trivial, update or create an ADR.
+- If architecture or flow changes, update the related diagram source and export.
 
-Pythonを使った機械学習のための新モデルの開発・構築・デプロイを行うプロジェクト。
+## Testing
+- Add, update, or remove tests in the same change set.
+- Cover positive, negative, boundary, and regression cases as appropriate.
+- Do not leave obsolete tests, fixtures, or golden files behind.
 
-## 技術スタック
+## Environment
+- Read `project/environment/environment.yaml` first.
+- If the environment file is incomplete, inspect common repo markers and CI files.
+- Summarize detected build, test, lint, format, and runtime commands before risky changes.
 
-- 言語: Python 3.11+
-- パッケージマネージャー: uv（.venv でローカル管理）
-- 主要ライブラリ: PyTorch, Transformers, scikit-learn, pandas, numpy, matplotlib
-- ノートブック: Jupyter Notebook（.ipynb）
-- コンテナ: Docker
+## Git workflow
+- Never work directly on `main` or `master`.
+- Use a branch named `copilot/<type>/<scope>-<slug>`.
+- Review recent commit history before proposing a commit message.
+- Create clear conventional-style commit messages grounded in the actual diff.
+- Never push unless explicitly requested.
 
-## Python環境・パッケージ管理
+## Quality gates
+- Run the smallest sufficient validation first, then expand if risk is high.
+- Prefer deterministic checks and report what was validated.
+- Surface remaining risks, assumptions, and unvalidated areas explicitly.
 
-- パッケージのインストールは `uv add <パッケージ名>` を使用する（pyproject.toml に記録される）
-- `uv pip install` は原則使用しない（環境の再現性を最優先する）
-- 開発用の依存は `uv add --dev <パッケージ名>` でインストールする
-- 環境の再構築は `uv sync` で行う
-- `.venv/` はリポジトリに含めない
-
-## コーディング規約
-
-PEP 8準拠のPythonコードを記述する。詳細は `coding-conventions` スキルを参照。
-
-- コメント・docstring: 日本語
-- コード（変数名・関数名・クラス名）: 英語
-- ノートブックのファイル名: 日本語可（番号付き）
-
-## ディレクトリ構成
-
-```
-main.py                # エントリーポイント（ルートの唯一のPythonスクリプト）
-pyproject.toml         # プロジェクト設定・依存関係（uv管理）
-.env                   # 環境変数（APIキー等）
-src/                   # モデル定義・学習ロジック・推論パイプライン等のソースコード
-data/                  # データセット（coco_2017やcustom_dataset_v2026.1.1などサブフォルダで管理）
-notebooks/             # 各種機能を試すためのJupyter Notebook（日本語ファイル名・番号付き）
-util/                  # 汎用ユーティリティ関数（ロギング、可視化、評価指標など）
-model_weights/         # 学習済みモデルの重みファイル（.gitignore対象）
-output/                # 実行結果の出力先（YYYYMMDD-hhmmss_[task名]/ サブフォルダで管理）
-temp/                  # 一時ファイル・実験用スクリプト
-docker/                # Dockerfile, docker-compose.yml
-test/                  # テストコード（pytest）
-.github/               # Copilotカスタマイズファイル
-```
-
-## 出力フォルダの規約
-
-実行結果は `output/YYYYMMDD-HHMMSS_[task名]/` に保存する。詳細は `output-management` スキルを参照。
-
-## ノートブックの規約
-
-- ファイル名は日本語で記載し、先頭に実行順の番号を付ける
-- 例: `01_基盤モデルを試す.ipynb`, `02_訓練データセットを用意する.ipynb`
-- サニティチェックやミニマム実行を最初に行えるようにする
-- 擬似データの生成によるサニティチェックを推奨する
-- 必要に応じてサブフォルダ（モデル別など）を作成してよい
-
-## ビルド・テスト
-
-- 環境構築: `uv sync`
-- テスト: `uv run pytest test/`
-- リント: `uv run ruff check .`
-- フォーマット: `uv run ruff format .`
-- 学習実行: `uv run python main.py`
-
-## Gitワークフロー
-
-ブランチ戦略、コミットタイミング、メッセージフォーマット等の詳細は `git-workflow` スキルを参照。
-
-基本方針:
-- ローカルで新規ブランチを作成してから編集を開始する
-- 論理的なまとまりでコミットする（TODOの途中も可）
-- リモートへのpushは行わない（マージは手動実施）
-
-
-# 知見蓄積のサイクル
-
-ユーザーとのやり取りを通して得た知見を体系的に蓄積する。
-
-## Skillsの作成提案
-
-以下の条件に該当する場合、回答の最後に知見のまとめとSkillの作成提案を行う:
-
-- 他の場面でも発生しうる問題を解決した場合
-- 効率化のノウハウを得た場合
-- 特定のライブラリ・フレームワークの落とし穴を発見した場合
-- 環境構築やデバッグで再利用可能な手順を確立した場合
-
-### 提案フォーマット
-
-```
-💡 知見のまとめ: [知見のタイトル]
-- 問題: [何が問題だったか]
-- 解決: [どう解決したか]
-- 汎用性: [他のどんな場面で役立つか]
-
-→ `.github/skills/[スキル名]/` にSkillとして保存しますか？
-```
-
-### Skillの配置
-
-- スキルは `.github/skills/<スキル名>/SKILL.md` に配置する
-- Agent Skills 標準（agentskills.io）に準拠する
-- 作成手順は `.github/skills/skill-creator/SKILL.md` を参照する
-- スキル名は小文字・ハイフン区切り（例: `debugging-cuda`, `optimizing-dataloader`）
+## Output
+- Summarize assumptions, changed files, tests, docs, diagrams, and remaining risks.
+- When blocked, ask precise questions instead of proceeding blindly.
